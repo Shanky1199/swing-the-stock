@@ -1,0 +1,8 @@
+Flask== 3.0.0  # A lightweight web framework for building the API endpoints
+pandas==1.3.3  # A powerful data analysis and manipulation library# A machine learning library for classification, regression, clustering, etc.
+numpy==1.21.2  # A library for numerical computations
+requests==2.26.0  # A library for making HTTP requests to external APIs
+SQLAlchemy==1.4.25  # A SQL toolkit and Object-Relational Mapping (ORM) library for Python
+gunicorn==20.1.0  # A production-ready WSGI server for running Flask applications
+python-dotenv==0.19.1  # A library for reading environment variables from a .env file
+scikit-learn 
