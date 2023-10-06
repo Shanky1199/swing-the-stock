@@ -4,6 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base
 from dotenv import load_dotenv
+from routes.user_routes import user_bp
+from routes.stock_routes import stock_bp
 # Load environment variables from .env file
 load_dotenv()
 
@@ -21,6 +23,10 @@ else:
 
 # Create a Flask application
 app = Flask(__name__)
+
+
+app.register_blueprint(user_bp, url_prefix='/user')
+app.register_blueprint(stock_bp, url_prefix='/stock')
 
 # Create a database engine
 engine = create_engine(DATABASE_URI)
