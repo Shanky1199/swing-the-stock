@@ -5,7 +5,8 @@ from sqlalchemy.orm import sessionmaker
 from models import Base
 from dotenv import load_dotenv
 from routes.user_routes import user_bp
-from routes.stock_routes import stock_bp
+#from routes.stock_routes import stock_bp
+from services.fetch_service import get_historical_stock_data
 # Load environment variables from .env file
 load_dotenv()
 
@@ -26,7 +27,7 @@ app = Flask(__name__)
 
 
 app.register_blueprint(user_bp, url_prefix='/user')
-app.register_blueprint(stock_bp, url_prefix='/stock')
+#app.register_blueprint(stock_bp, url_prefix='/stock')
 
 # Create a database engine
 engine = create_engine(DATABASE_URI)
@@ -40,8 +41,9 @@ Base.metadata.create_all(engine)
 # Define a route for the root URL
 @app.route('/')
 def index():
-    return 'Welcome to your Flask app!'
+    return  get_historical_stock_data('AAPL')
 
 # Run the Flask app if this file is executed
 if __name__ == '__main__':
     app.run(debug=True)
+    print("coming here")

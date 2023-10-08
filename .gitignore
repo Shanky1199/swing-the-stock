@@ -1,5 +1,5 @@
 # Ignore virtual environment
-venv/
+environment/
 
 # Ignore environment variables file
 .env
@@ -13,3 +13,5 @@ venv/
 .idea/
 *.sublime-project
 *.sublime-workspace
+
+.DS_Store
