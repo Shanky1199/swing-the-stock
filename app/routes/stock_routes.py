@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from services.stock_service import StockService
+from controllers.stock_controller import get_stock_details_controller
 
 stock_bp = Blueprint('stock', __name__)
 
@@ -20,19 +20,24 @@ def add_stock():
     except Exception as e:
         return jsonify({"message": str(e)}), 500
 
-@stock_bp.route('/api/stocks/<int:stock_id>', methods=['GET'])
-def get_stock(stock_id):
-    try:
-        # Call the service function to get stock by ID
-        stock = StockService.get_stock_by_id(stock_id)
 
-        if stock:
-            # Convert stock object to JSON and return
-            return jsonify({"stock": stock.serialize()}), 200
+stock_bp.route('/api/stock-details', methods=['GET'])
+def get_stock():
+    try:
+        symbol = request.args.get('symbol')
+        date = request.args.get('date')
+
+        if not symbol or not date:
+            return jsonify({"error": "Symbol and date parameters are required."}), 400
+
+        stock_details = get_stock_details_controller(symbol, date)
+
+        if stock_details:
+            return jsonify(stock_details), 200
         else:
-            return jsonify({"message": "Stock not found"}), 404
+            return jsonify({"message": "No data found for the given symbol and date."}), 404
     except Exception as e:
-        return jsonify({"message": str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
 @stock_bp.route('/api/stocks', methods=['GET'])
 def get_all_stocks():
