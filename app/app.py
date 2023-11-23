@@ -1,52 +1,37 @@
 import os
 from flask import Flask
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-from models import Base
-from dotenv import load_dotenv
+from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from routes.user_routes import user_bp
-# from routes.stock_routes import stock_bp
+from sqlalchemy.orm import scoped_session, sessionmaker
+from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
 
-def create_app(test_config=None):
-    # Create a Flask application
-    app = Flask(__name__)
+# Initialize SQLAlchemy
+db = SQLAlchemy()
 
-    # Load configuration from the respective environment
-    if test_config is None:
-        if os.getenv('FLASK_ENV') == 'production':
-            app.config.from_object('config.ProductionConfig')
-        else:
-            app.config.from_object('config.DevelopmentConfig')
-    else:
-        app.config.from_mapping(test_config)
+def create_app(config_filename):
+    app = Flask(__name__, instance_relative_config=True)
 
-    # Initialize database
-    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-    db_session = scoped_session(sessionmaker(bind=engine))
-    Base.query = db_session.query_property()
+    # Load environment-specific configuration
+    app.config.from_object(config_filename)
 
-    # Initialize Flask-Migrate
-    Migrate(app, engine)
+    # Initialize db with app
+    db.init_app(app)
 
-    # Register blueprints
-    app.register_blueprint(user_bp, url_prefix='/user')
-    # app.register_blueprint(stock_bp, url_prefix='/stock')
+    # Flask-Migrate initialization
+    migrate = Migrate(app, db)
 
-    # Create tables in the database
-    with app.app_context():
-        Base.metadata.create_all(engine)
-
-    # Root route
-    @app.route('/')
-    def index():
-        return "Hello"
+    # Import and register blueprints...
+    # from yourapplication.some_module import some_blueprint
+    # app.register_blueprint(some_blueprint)
 
     return app
 
+# Create an instance of the app
+config_name = os.getenv('FLASK_CONFIGURATION', 'development')
+app = create_app(f'config.{config_name.capitalize()}Config')
+
 if __name__ == '__main__':
-    app = create_app()
-    app.run(debug=app.config['DEBUG'])
+    app.run()

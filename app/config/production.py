@@ -1,9 +1,6 @@
-# development.py
-from dotenv import load_dotenv
-import os
+from .default import Config
 
-# Load environment variables from .env file
-load_dotenv()
-
-# Read database URL from environment variables
-DATABASE_URI = os.getenv('PROD_DATABASE_URI')
+class ProductionConfig(Config):
+    DEBUG = False
+    SQLALCHEMY_DATABASE_URI = 'your_production_database_uri'
+    # Other production-specific settings...
