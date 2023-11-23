@@ -1,13 +1,13 @@
-from sqlalchemy import Column, Integer, Float, String, Date
-from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
+from sqlalchemy import Column, Integer, String, Float, Date
+from models import Base
 
 class Stock(Base):
     __tablename__ = 'stocks'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
+    id = Column(Integer, primary_key=True)
     symbol = Column(String(10), nullable=False)
+    sector = Column(String(50))
+    market_cap = Column(Float)
     date = Column(Date, nullable=False)
     open_price = Column(Float, nullable=False)
     high_price = Column(Float, nullable=False)

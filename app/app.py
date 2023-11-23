@@ -1,49 +1,52 @@
 import os
 from flask import Flask
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session, sessionmaker
 from models import Base
 from dotenv import load_dotenv
+from flask_migrate import Migrate
 from routes.user_routes import user_bp
-#from routes.stock_routes import stock_bp
-from services.fetch_service import get_historical_stock_data
+# from routes.stock_routes import stock_bp
+
 # Load environment variables from .env file
 load_dotenv()
 
-# Determine the environment (default to 'development' if not set)
-environment = os.getenv('ENV', 'development')
+def create_app(test_config=None):
+    # Create a Flask application
+    app = Flask(__name__)
 
-# Import the appropriate configuration file based on the environment
-if environment == 'production':
-    from config.production import DATABASE_URI
-elif environment == 'development':
-    from config.development import DATABASE_URI
-else:
-    raise ValueError("Invalid environment specified in ENV variable.")
+    # Load configuration from the respective environment
+    if test_config is None:
+        if os.getenv('FLASK_ENV') == 'production':
+            app.config.from_object('config.ProductionConfig')
+        else:
+            app.config.from_object('config.DevelopmentConfig')
+    else:
+        app.config.from_mapping(test_config)
 
+    # Initialize database
+    engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+    db_session = scoped_session(sessionmaker(bind=engine))
+    Base.query = db_session.query_property()
 
-# Create a Flask application
-app = Flask(__name__)
+    # Initialize Flask-Migrate
+    Migrate(app, engine)
 
+    # Register blueprints
+    app.register_blueprint(user_bp, url_prefix='/user')
+    # app.register_blueprint(stock_bp, url_prefix='/stock')
 
-app.register_blueprint(user_bp, url_prefix='/user')
-#app.register_blueprint(stock_bp, url_prefix='/stock')
+    # Create tables in the database
+    with app.app_context():
+        Base.metadata.create_all(engine)
 
-# Create a database engine
-engine = create_engine(DATABASE_URI)
+    # Root route
+    @app.route('/')
+    def index():
+        return "Hello"
 
-# Create a session class
-Session = sessionmaker(bind=engine)
+    return app
 
-# Create tables in the database
-Base.metadata.create_all(engine)
-
-# Define a route for the root URL
-@app.route('/')
-def index():
-    return  get_historical_stock_data('AAPL')
-
-# Run the Flask app if this file is executed
 if __name__ == '__main__':
-    app.run(debug=True)
-    print("coming here")
+    app = create_app()
+    app.run(debug=app.config['DEBUG'])
