@@ -7,7 +7,7 @@ PIP := $(VENV_NAME)/bin/pip
 
 # Default target (run the application)
 server: 
-	$(PYTHON) app/app.py
+	$(PYTHON) app.py
 
 
 
