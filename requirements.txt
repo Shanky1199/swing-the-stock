@@ -2,7 +2,10 @@ Flask
 pandas
 numpy
 requests
-SQLAlchemy
 gunicorn
 python-dotenv
 scikit-learn
+Flask-Migrate
+psycopg2
+jwt
+Flask-SQLAlchemy
