@@ -20,9 +20,7 @@ db = SQLAlchemy(app)
 # Initialize Flask-Migrate with the app and db
 migrate = Migrate(app, db)
 
-# Import and register blueprints if you have any
-# from app.controllers.some_controller import some_blueprint
-# app.register_blueprint(some_blueprint)
+
 
 if __name__ == '__main__':
     app.run()
