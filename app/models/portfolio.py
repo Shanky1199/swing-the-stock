@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey, Float
-from models import Base
+from app.models import Base
 
 class Portfolio(Base):
     __tablename__ = 'portfolios'

@@ -1,4 +1,4 @@
-from models import Stock
+from app.models import Stock
 from datetime import datetime
 
 def get_stock_details(symbol, date_str):
