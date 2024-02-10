@@ -1,12 +1,18 @@
 from flask import Blueprint, request, jsonify
-from services.user_service import UserService
+from app.services.user_service import UserService
 
 user_bp = Blueprint('user', __name__)
 
 @user_bp.route('/api/users/register', methods=['POST'])
 def register_user():
+    try:
+        payload = request.json;
+        createdUser = UserService.create_user(payload)
+        return jsonify({"user": createdUser.serialize()}), 201
+        
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
     # Implementation for user registration
-    pass
 
 @user_bp.route('/api/users/login', methods=['POST'])
 def login_user():

@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, ForeignKey
-from models import Base
+from app.models import Base
 
 class Watchlist(Base):
     __tablename__ = 'watchlists'

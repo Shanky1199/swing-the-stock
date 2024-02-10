@@ -1,6 +1,6 @@
 # services/user_service.py
-
-from models import User  # Import your User model
+from flask import jsonify
+from app.models import User  # Import your User model
 
 
 class UserService:
@@ -8,7 +8,13 @@ class UserService:
     def create_user(payload):
         try:
             # Check if the user already exists
-            username, email, password, first_name, last_name, premium_member, accounts, pan_number = payload
+            print("1 coming till here")
+            username, email, password, first_name, last_name,  pan_number = payload
+            print("coming till here")
+            
+            if not username or not email or not pan_number:
+                return None, "Username, email, or PAN number is missing"
+
             existing_user = User.query.filter_by(username=username).first()
             if existing_user:
                 return None, "Username already exists"
@@ -20,15 +26,14 @@ class UserService:
                 password=password,  # Hash the password before storing it (not shown in this example)
                 first_name=first_name,
                 last_name=last_name,
-                premium_member=premium_member,
-                accounts=accounts,
                 pan_number=pan_number
             )
-            new_user.create()  # Assuming User model has a `save` method for adding to the database
-            return new_user, None
+            response = new_user.create()  # Assuming User model has a `save` method for adding to the database
+            return "user created successfully", None
         except Exception as e:
-
+            print(e)
             return None, str(e)
+        
     @staticmethod
     def get_user_by_username(username):
         return User.query.filter_by(username=username).first()
